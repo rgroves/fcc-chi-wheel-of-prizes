@@ -60,11 +60,18 @@ body {
 
 .game-board__puzzle-letter {
   background-color: white;
-  color: black;
+  color: transparent;
   padding: 0.25em;
   line-height: 1.75em;
   border: 3px double black;
   min-width: 1em;
+  transform: scaleX(-1);
+}
+
+.game-board__puzzle-letter--reveal {
+  transition: transform 1s ease-in-out, color 1.5s ease-in;
+  color: black;
+  transform: scaleX(1);
 }
 
 .game-board__puzzle-space {
