@@ -41,12 +41,18 @@ body {
 .game-board__puzzle {
   border: 1px solid blue;
   grid-area: puzzle;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.game-board__puzzle-word {
+  display: flex;
 }
 
 .game-board__puzzle-letter {
   background-color: white;
   color: black;
-  padding: 0.1em;
+  padding: 0.25em;
   line-height: 1.75em;
   border: 3px double black;
 }
