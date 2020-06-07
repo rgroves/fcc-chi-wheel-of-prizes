@@ -102,6 +102,10 @@ body {
   grid-area: scoreboard;
 }
 
+.player-card {
+  padding: 1em;
+}
+
 @media (min-width: 600px) {
   .game-board {
     grid-template-columns: 75% 25%;
