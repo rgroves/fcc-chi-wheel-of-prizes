@@ -1,0 +1,48 @@
+.game-board {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-areas:
+    "title"
+    "category"
+    "puzzle"
+    "feedback"
+    "controls"
+    "scoreboard";
+}
+
+.game-board__title {
+  border: 1px solid red;
+  grid-area: title;
+}
+.game-board__category {
+  border: 1px solid yellow;
+  grid-area: category;
+}
+.game-board__puzzle {
+  border: 1px solid blue;
+  grid-area: puzzle;
+}
+.game-board__feedback {
+  border: 1px solid green;
+  grid-area: feedback;
+}
+.game-board__controls {
+  border: 1px solid orange;
+  grid-area: controls;
+}
+.game-board__scoreboard {
+  border: 1px solid purple;
+  grid-area: scoreboard;
+}
+
+@media (min-width: 600px) {
+  .game-board {
+    grid-template-columns: 75% 25%;
+    grid-template-areas:
+      "title scoreboard"
+      "puzzle scoreboard"
+      "category scoreboard"
+      "feedback scoreboard"
+      "controls scoreboard";
+  }
+}
