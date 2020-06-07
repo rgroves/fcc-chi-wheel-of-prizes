@@ -15,6 +15,7 @@
   ];
 
   let lastWheelPosition = { value: 0 };
+  let currentWheelValue;
 
   function* wheelSpinner(start, tics) {
     for (let i = 0; i < tics; i++) {
@@ -26,6 +27,9 @@
 
   function handleSpin(event) {
     event.preventDefault();
+    const button = event.target.querySelector("button");
+    button.disabled = true;
+
     const tics = Math.floor(Math.random() * 10) + 10;
     const spinner = wheelSpinner(lastWheelPosition.value + 1, tics);
 
@@ -47,6 +51,11 @@
 
       if (lastWheelPosition.done) {
         clearInterval(spinInterval);
+        currentWheelValue = wheelAmounts[index];
+        hide(event.target);
+        button.disabled = false;
+        show(guessForm);
+        console.log(currentWheelValue);
       }
     }, 250);
   }
