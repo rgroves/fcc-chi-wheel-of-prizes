@@ -13,6 +13,8 @@
 .game-board__title {
   border: 1px solid red;
   grid-area: title;
+  font-family: "Slackey", cursive;
+  text-align: center;
 }
 .game-board__category {
   border: 1px solid yellow;
