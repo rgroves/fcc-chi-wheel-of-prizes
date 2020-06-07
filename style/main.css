@@ -31,6 +31,8 @@ body {
 .game-board__feedback {
   border: 1px solid green;
   grid-area: feedback;
+  padding: 1em;
+  text-align: center;
 }
 .game-board__controls {
   border: 1px solid orange;
