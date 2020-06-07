@@ -41,9 +41,17 @@ body {
 .game-board__puzzle {
   border: 1px solid blue;
   grid-area: puzzle;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas: ". puzzle-text .";
+  justify-content: center;
+  text-align: center;
+}
+
+.game-board__puzzle-text {
   display: flex;
   flex-wrap: wrap;
-  text-align: center;
+  grid-area: puzzle-text;
 }
 
 .game-board__puzzle-word {
