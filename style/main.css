@@ -17,13 +17,11 @@ body {
 }
 
 .game-board__title {
-  border: 1px solid red;
   grid-area: title;
   font-family: "Slackey", cursive;
   text-align: center;
 }
 .game-board__category {
-  border: 1px solid yellow;
   grid-area: category;
   text-align: center;
 }
@@ -39,7 +37,6 @@ body {
 }
 
 .game-board__puzzle {
-  border: 1px solid blue;
   grid-area: puzzle;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -79,14 +76,12 @@ body {
 }
 
 .game-board__feedback {
-  border: 1px solid green;
   grid-area: feedback;
   padding: 1em;
   text-align: center;
 }
 
 .game-board__controls {
-  border: 1px solid orange;
   grid-area: controls;
   text-align: center;
   padding: 1em;
@@ -105,7 +100,6 @@ body {
 }
 
 .game-board__scoreboard {
-  border: 1px solid purple;
   grid-area: scoreboard;
   display: flex;
   flex-wrap: wrap;
