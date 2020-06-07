@@ -43,6 +43,7 @@ body {
   grid-area: puzzle;
   display: flex;
   flex-wrap: wrap;
+  text-align: center;
 }
 
 .game-board__puzzle-word {
@@ -55,6 +56,7 @@ body {
   padding: 0.25em;
   line-height: 1.75em;
   border: 3px double black;
+  min-width: 1em;
 }
 
 .game-board__puzzle-space {
