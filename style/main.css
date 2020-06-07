@@ -42,6 +42,19 @@ body {
   border: 1px solid blue;
   grid-area: puzzle;
 }
+
+.game-board__puzzle-letter {
+  background-color: white;
+  color: black;
+  padding: 0.1em;
+  line-height: 1.75em;
+  border: 3px double black;
+}
+
+.game-board__puzzle-space {
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
 .game-board__feedback {
   border: 1px solid green;
   grid-area: feedback;
