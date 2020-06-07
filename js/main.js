@@ -17,6 +17,19 @@
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
 
+  const players = [
+    { name: "Player 1", score: 0 },
+    { name: "Player 2", score: 0 },
+  ];
+
+  function* changePlayer() {
+    let index = -1;
+    while (true) {
+      index++;
+      yield index % players.length;
+    }
+  }
+
   function* wheelSpinner(start, tics) {
     for (let i = 0; i < tics; i++) {
       yield (start + i) % wheelAmounts.length;
@@ -68,11 +81,36 @@
     element.classList.add("hide");
   }
 
+  // Pre-game setup
   let spinForm = document.getElementById("spin-form");
   spinForm.addEventListener("submit", handleSpin);
 
   let guessForm = document.getElementById("guess-form");
 
+  let scoreboard = document.getElementById("scoreboard");
+
+  players.forEach((player) => {
+    const playerCard = document.createElement("div");
+    playerCard.classList.add("player-card");
+
+    const playerName = document.createElement("p");
+    playerName.classList.add("player-card__name");
+    playerName.innerText = player.name;
+
+    const playerScore = document.createElement("p");
+    playerName.classList.add("player-card__score-card__name");
+    playerScore.innerText = "$" + player.score;
+
+    playerCard.appendChild(playerName);
+    playerCard.appendChild(playerScore);
+    scoreboard.appendChild(playerCard);
+  });
+
+  let playerChanger = changePlayer();
+  let playerIndex = playerChanger.next().value;
+  let currentPlayer = players[playerIndex];
+
+  // Start of game
   hide(guessForm);
   show(spinForm);
 })();

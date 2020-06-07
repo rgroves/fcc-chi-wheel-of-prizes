@@ -107,6 +107,10 @@ body {
 .game-board__scoreboard {
   border: 1px solid purple;
   grid-area: scoreboard;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
 }
 
 .player-card {
