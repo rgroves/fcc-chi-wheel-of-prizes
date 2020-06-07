@@ -51,6 +51,19 @@
     }, 250);
   }
 
+  function show(element) {
+    element.classList.remove("hide");
+  }
+
+  function hide(element) {
+    element.classList.add("hide");
+  }
+
   let spinForm = document.getElementById("spin-form");
   spinForm.addEventListener("submit", handleSpin);
+
+  let guessForm = document.getElementById("guess-form");
+
+  hide(guessForm);
+  show(spinForm);
 })();
