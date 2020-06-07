@@ -69,10 +69,26 @@ body {
   padding: 1em;
   text-align: center;
 }
+
 .game-board__controls {
   border: 1px solid orange;
   grid-area: controls;
+  text-align: center;
+  padding: 1em;
 }
+
+.controls-form button {
+  min-height: 2em;
+  width: 100%;
+  margin-top: 0.5em;
+  font-size: larger;
+}
+
+#guess-form input {
+  min-height: 2em;
+  font-size: larger;
+}
+
 .game-board__scoreboard {
   border: 1px solid purple;
   grid-area: scoreboard;
