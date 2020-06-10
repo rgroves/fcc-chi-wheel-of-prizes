@@ -12,7 +12,7 @@ This is a minimal specifications document for a Wheel of Fortune clone game. The
 
 - [ ] There should be 24 spaces in the wheel populated as follows:
   - [ ] There should be two "Bankrupt" spaces
-  - [ ] There should be one "Lose a Turn" wedge
+  - [ ] There should be one "Lose a Turn" space
   - [ ] Remaining spaces should have prize values ranging from $500 to $2500
 
 ## Gameplay
@@ -59,6 +59,7 @@ This is a minimal specifications document for a Wheel of Fortune clone game. The
 ### End of Round
 
 - [ ] Player with the highest current round score adds that value to their game total score
+- [ ] Display all players total scores briefly before the next round starts
 
 ## Future Enhancements
 
