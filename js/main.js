@@ -1,18 +1,61 @@
 (function () {
+  const SPECIAL_WHEEL_VALUES = {
+    LOSE_A_TURN: -1,
+    BANKRUPT: -2,
+  };
+
+  Object.freeze(SPECIAL_WHEEL_VALUES);
+
   const wheelAmounts = [
-    700,
-    1000000,
-    600,
-    550,
-    800,
-    600,
-    "BANKRUPT",
-    1000,
-    650,
-    900,
-    3500,
-    "LOSE A TURN",
+    { label: "$600", value: 600 },
+    { label: "$650", value: 650 },
+    { label: "$500", value: 500 },
+    { label: "$650", value: 650 },
+    { label: "$700", value: 700 },
+    { label: "LOSE A TURN", value: SPECIAL_WHEEL_VALUES.LOSE_A_TURN },
+    { label: "$500", value: 500 },
+    { label: "$650", value: 650 },
+    { label: "$600", value: 600 },
+    { label: "$700", value: 700 },
+    { label: "BANKRUPT", value: SPECIAL_WHEEL_VALUES.BANKRUPT },
+    { label: "$900", value: 900 },
+    { label: "$500", value: 500 },
+    { label: "$700", value: 700 },
+    { label: "$500", value: 500 },
+    { label: "$700", value: 700 },
+    { label: "$600", value: 600 },
+    { label: "$650", value: 650 },
+    { label: "$800", value: 800 },
+    { label: "BANKRUPT", value: SPECIAL_WHEEL_VALUES.BANKRUPT },
+    { label: "$2500", value: 2500 },
+    { label: "$500", value: 500 },
+    { label: "$600", value: 600 },
+    { label: "$550", value: 550 },
   ];
+
+  function centerToWidth(label, width) {
+    const padChar = "&nbsp;";
+
+    const padTotal = width - label.length;
+    const padSize = Math.round(padTotal / 2);
+    const paddedLabel =
+      padChar.repeat(padSize) +
+      label +
+      padChar.repeat(padSize - (padTotal % 2));
+    return paddedLabel;
+  }
+
+  function initializeWheel() {
+    const maxLabelLength = wheelAmounts.reduce((acc, cur) => {
+      return cur.label.length > acc ? cur.label.length : acc;
+    }, 0);
+    console.log({ maxLabelLength });
+
+    wheelAmounts.forEach((wedge) => {
+      wedge.label = centerToWidth(wedge.label, maxLabelLength);
+      console.log(wedge.label);
+    });
+  }
 
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
@@ -43,7 +86,8 @@
     const button = event.target.querySelector("button");
     button.disabled = true;
 
-    const tics = Math.floor(Math.random() * 10) + 10;
+    const tics =
+      Math.floor(Math.random() * wheelAmounts.length) + wheelAmounts.length;
     const spinner = wheelSpinner(lastWheelPosition.value + 1, tics);
 
     const spinInterval = setInterval(() => {
@@ -55,22 +99,22 @@
       const indexAfter =
         (index + wheelAmounts.length + 1) % wheelAmounts.length;
 
-      feedback.innerText =
-        wheelAmounts[indexBefore] +
+      feedback.innerHTML =
+        wheelAmounts[indexBefore].label +
         " |> " +
-        wheelAmounts[index] +
+        wheelAmounts[index].label +
         " <| " +
-        wheelAmounts[indexAfter];
+        wheelAmounts[indexAfter].label;
 
       if (lastWheelPosition.done) {
         clearInterval(spinInterval);
-        currentWheelValue = wheelAmounts[index];
+        currentWheelValue = wheelAmounts[index].value;
         hide(event.target);
         button.disabled = false;
         show(guessForm);
         console.log(currentWheelValue);
       }
-    }, 250);
+    }, 100);
   }
 
   function show(element) {
@@ -111,6 +155,8 @@
   let currentPlayer = players[playerIndex];
 
   // Start of game
+  initializeWheel();
+
   hide(guessForm);
   show(spinForm);
 })();
