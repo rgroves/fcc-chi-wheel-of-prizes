@@ -17,7 +17,7 @@ This is a minimal specifications document for a Wheel of Fortune clone game. The
 
 ## Gameplay
 
-- Each game will consist of three rounds.
+- [ ] Each game will consist of three rounds.
 
 ### Game Start
 
