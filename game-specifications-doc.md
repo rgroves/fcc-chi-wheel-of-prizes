@@ -71,6 +71,6 @@ Below are some suggestions for enhancements you may want to make to your version
 - [ ] Implement a "Game Setup" screen to set number of players and customize player names
 - [ ] Implement AI for computer-controlled players
 - [ ] Implement a Canvas version of the wheel
-- [ ] Implement special prizes on various wedges (Free Play, Wild, Gifts, etc.)
+- [ ] Implement special prizes on various wheel spaces (Free Play, Wild, Gifts, etc.)
 - [ ] Implement special puzzles (Toss-Up, Crossword, etc.)
 - [ ] Implement a bonus round like the bonus round on Wheel of Fortune
