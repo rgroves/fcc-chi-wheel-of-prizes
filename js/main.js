@@ -18,8 +18,8 @@
   let currentWheelValue;
 
   const players = [
-    { name: "Player 1", score: 0 },
-    { name: "Player 2", score: 0 },
+    { name: "Player 1", totalScore: 0, roundScore: 0 },
+    { name: "Player 2", totalScore: 0, roundScore: 0 },
   ];
 
   function* changePlayer() {
