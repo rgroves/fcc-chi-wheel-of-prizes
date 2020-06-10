@@ -52,7 +52,10 @@
     console.log({ maxLabelLength });
 
     wheelAmounts.forEach((wedge) => {
-      wedge.label = centerToWidth(wedge.label, maxLabelLength);
+      wedge.label = centerToWidth(wedge.label, maxLabelLength).replace(
+        / /g,
+        "&nbsp;"
+      );
       console.log(wedge.label);
     });
   }
@@ -101,9 +104,9 @@
 
       feedback.innerHTML =
         wheelAmounts[indexBefore].label +
-        " |> " +
+        "|>&nbsp;" +
         wheelAmounts[index].label +
-        " <| " +
+        "&nbsp;<|" +
         wheelAmounts[indexAfter].label;
 
       if (lastWheelPosition.done) {
