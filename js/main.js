@@ -235,7 +235,7 @@
         guessForm.elements.guess.focus();
       } else {
         // Provide feedback that the guess was unsuccessful.
-        feedback.innerText = "Sorry, No " + guessedLetter + "'s";
+        feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
         // TODO Change player, show player options
       }
     });
