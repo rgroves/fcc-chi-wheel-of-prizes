@@ -33,6 +33,17 @@
     { label: "$550", value: 550 },
   ];
 
+  let lastWheelPosition = { value: 0 };
+  let currentWheelValue;
+
+  const players = [
+    { name: "Player 1", totalScore: 0, roundScore: 0 },
+    { name: "Player 2", totalScore: 0, roundScore: 0 },
+  ];
+
+  let spinForm, guessForm, scoreboard, currentPlayer;
+  let playerChanger = changePlayer();
+
   function centerToWidth(label, width) {
     const padChar = "&nbsp;";
 
@@ -49,24 +60,14 @@
     const maxLabelLength = wheelAmounts.reduce((acc, cur) => {
       return cur.label.length > acc ? cur.label.length : acc;
     }, 0);
-    console.log({ maxLabelLength });
 
     wheelAmounts.forEach((wedge) => {
       wedge.label = centerToWidth(wedge.label, maxLabelLength).replace(
         / /g,
         "&nbsp;"
       );
-      console.log(wedge.label);
     });
   }
-
-  let lastWheelPosition = { value: 0 };
-  let currentWheelValue;
-
-  const players = [
-    { name: "Player 1", totalScore: 0, roundScore: 0 },
-    { name: "Player 2", totalScore: 0, roundScore: 0 },
-  ];
 
   function* changePlayer() {
     let index = -1;
@@ -74,6 +75,25 @@
       index++;
       yield index % players.length;
     }
+  }
+
+  function initializePlayers() {
+    players.forEach((player) => {
+      const playerCard = document.createElement("div");
+      playerCard.classList.add("player-card");
+
+      const playerName = document.createElement("p");
+      playerName.classList.add("player-card__name");
+      playerName.innerText = player.name;
+
+      const playerScore = document.createElement("p");
+      playerName.classList.add("player-card__score-card__name");
+      playerScore.innerText = "$" + player.score;
+
+      playerCard.appendChild(playerName);
+      playerCard.appendChild(playerScore);
+      scoreboard.appendChild(playerCard);
+    });
   }
 
   function* wheelSpinner(start, tics) {
@@ -115,7 +135,6 @@
         hide(event.target);
         button.disabled = false;
         show(guessForm);
-        console.log(currentWheelValue);
       }
     }, 100);
   }
@@ -128,38 +147,26 @@
     element.classList.add("hide");
   }
 
-  // Pre-game setup
-  let spinForm = document.getElementById("spin-form");
-  spinForm.addEventListener("submit", handleSpin);
+  // The initializeGame function performs all of the initializations that should
+  // happen before the start of a new game.
+  function initializeGame() {
+    // Get reference to spin form and wire up wheel spin handler.
+    spinForm = document.getElementById("spin-form");
+    spinForm.addEventListener("submit", handleSpin);
 
-  let guessForm = document.getElementById("guess-form");
+    guessForm = document.getElementById("guess-form");
+    scoreboard = document.getElementById("scoreboard");
 
-  let scoreboard = document.getElementById("scoreboard");
+    initializeWheel();
+    initializePlayers();
 
-  players.forEach((player) => {
-    const playerCard = document.createElement("div");
-    playerCard.classList.add("player-card");
+    let playerIndex = playerChanger.next().value;
+    currentPlayer = players[playerIndex];
 
-    const playerName = document.createElement("p");
-    playerName.classList.add("player-card__name");
-    playerName.innerText = player.name;
-
-    const playerScore = document.createElement("p");
-    playerName.classList.add("player-card__score-card__name");
-    playerScore.innerText = "$" + player.score;
-
-    playerCard.appendChild(playerName);
-    playerCard.appendChild(playerScore);
-    scoreboard.appendChild(playerCard);
-  });
-
-  let playerChanger = changePlayer();
-  let playerIndex = playerChanger.next().value;
-  let currentPlayer = players[playerIndex];
+    hide(guessForm);
+    show(spinForm);
+  }
 
   // Start of game
-  initializeWheel();
-
-  hide(guessForm);
-  show(spinForm);
+  initializeGame();
 })();
