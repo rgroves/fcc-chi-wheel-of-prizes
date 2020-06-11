@@ -41,7 +41,13 @@
     { name: "Player 2", scoreDisplay: undefined, totalScore: 0, roundScore: 0 },
   ];
 
-  let spinForm, guessForm, scoreboard, currentPlayer;
+  let spinForm,
+    guessForm,
+    scoreboard,
+    currentPlayer,
+    puzzleCategory,
+    puzzleText;
+
   let playerChanger = changePlayer();
 
   function centerToWidth(label, width) {
@@ -156,6 +162,8 @@
     spinForm = document.getElementById("spin-form");
     spinForm.addEventListener("submit", handleSpin);
 
+    puzzleCategory = document.getElementById("puzzle-category");
+    puzzleText = document.getElementById("puzzle-text");
     guessForm = document.getElementById("guess-form");
     scoreboard = document.getElementById("scoreboard");
 
@@ -169,6 +177,47 @@
     show(spinForm);
   }
 
+  function initializeRound() {
+    // Choose a random puzzle for this round.
+    const puzzleIndex = Math.floor(Math.random() * puzzles.length);
+    const puzzle = puzzles[puzzleIndex];
+
+    const puzzleWords = puzzle.text.split(" ");
+
+    puzzleWords.forEach((word, wordIndex) => {
+      const wordDiv = document.createElement("div");
+      wordDiv.classList.add("game-board__puzzle-word");
+
+      const puzzleLetters = word.split("");
+
+      puzzleLetters.forEach((letter) => {
+        const letterSpan = document.createElement("span");
+        letterSpan.classList.add("game-board__puzzle-letter");
+
+        if (!/[A-Za-z]/.test(letter)) {
+          letterSpan.innerText = letter.toUpperCase();
+          letterSpan.classList.add("game-board__puzzle-letter--reveal");
+        }
+
+        wordDiv.appendChild(letterSpan);
+      });
+
+      // Add space to all words excluding the last word.
+      if (wordIndex < puzzleWords.length - 1) {
+        const spaceSpan = document.createElement("span");
+        spaceSpan.classList.add("game-board__puzzle-space");
+        wordDiv.appendChild(spaceSpan);
+      }
+
+      puzzleText.appendChild(wordDiv);
+    });
+
+    // Display puzzle category.
+    puzzleCategory.innerText = puzzle.category.toUpperCase();
+  }
+
   // Start of game
   initializeGame();
+
+  initializeRound();
 })();
