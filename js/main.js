@@ -189,9 +189,6 @@
     initializePlayers();
 
     currentRound = 1;
-
-    hide(guessForm);
-    show(spinForm);
   }
 
   function initializeRound() {
@@ -261,6 +258,9 @@
       "player-card--inactive",
       "player-card--active"
     );
+
+    hide(guessForm);
+    show(spinForm);
   }
 
   // Start of game
