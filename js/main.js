@@ -236,7 +236,8 @@
       } else {
         // Provide feedback that the guess was unsuccessful.
         feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
-        // TODO Change player, show player options
+        switchPlayer();
+        // TODO show player options
       }
     });
   }
@@ -265,6 +266,45 @@
 
   function hide(element) {
     element.classList.add("hide");
+  }
+
+  function randomizeCurrentPlayer() {
+    let playerIndex;
+
+    if (currentPlayer) {
+      currentPlayer.cardDisplay.classList.replace(
+        "player-card--active",
+        "player-card--inactive"
+      );
+    }
+
+    // Randomly cycle player index to choose a player.
+    for (let i = 0; i < Math.random() * 2; i++) {
+      playerIndex = playerChanger.next().value;
+    }
+
+    currentPlayer = players[playerIndex];
+
+    currentPlayer.cardDisplay.classList.replace(
+      "player-card--inactive",
+      "player-card--active"
+    );
+  }
+
+  function switchPlayer() {
+    playerIndex = playerChanger.next().value;
+
+    currentPlayer.cardDisplay.classList.replace(
+      "player-card--active",
+      "player-card--inactive"
+    );
+
+    currentPlayer = players[playerIndex];
+
+    currentPlayer.cardDisplay.classList.replace(
+      "player-card--inactive",
+      "player-card--active"
+    );
   }
 
   // The initializeGame function performs all of the initializations that should
@@ -362,25 +402,12 @@
     let playerIndex;
 
     if (currentRound === 1) {
-      // For the first round, randomly cycle player index to choose player to
-      // start the round.
-      for (let i = 0; i < Math.random() * 10; i++) {
-        playerIndex = playerChanger.next().value;
-      }
+      // For the first round, randomly choose a player to start the round.
+      randomizeCurrentPlayer();
     } else {
       // For all rounds after the first, just move to the next player.
-      playerIndex = playerChanger.next().value;
-      currentPlayer.cardDisplay.classList.replace(
-        "player-card--active",
-        "player-card--inactive"
-      );
+      switchPlayer();
     }
-
-    currentPlayer = players[playerIndex];
-    currentPlayer.cardDisplay.classList.replace(
-      "player-card--inactive",
-      "player-card--active"
-    );
 
     feedback.innerText =
       "Round " + currentRound + ": " + currentPlayer.name + " spin the wheel.";
