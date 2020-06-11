@@ -37,8 +37,8 @@
   let currentWheelValue;
 
   const players = [
-    { name: "Player 1", totalScore: 0, roundScore: 0 },
-    { name: "Player 2", totalScore: 0, roundScore: 0 },
+    { name: "Player 1", scoreDisplay: undefined, totalScore: 0, roundScore: 0 },
+    { name: "Player 2", scoreDisplay: undefined, totalScore: 0, roundScore: 0 },
   ];
 
   let spinForm, guessForm, scoreboard, currentPlayer;
@@ -87,12 +87,14 @@
       playerName.innerText = player.name;
 
       const playerScore = document.createElement("p");
-      playerName.classList.add("player-card__score-card__name");
-      playerScore.innerText = "$" + player.score;
+      playerScore.classList.add("player-card__score");
 
       playerCard.appendChild(playerName);
       playerCard.appendChild(playerScore);
       scoreboard.appendChild(playerCard);
+
+      player.scoreDisplay = playerScore;
+      player.totalScore = 0;
     });
   }
 
