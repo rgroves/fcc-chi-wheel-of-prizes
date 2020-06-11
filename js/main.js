@@ -46,7 +46,8 @@
     scoreboard,
     currentPlayer,
     puzzleCategory,
-    puzzleText;
+    puzzleText,
+    currentRound;
 
   let playerChanger = changePlayer();
 
@@ -170,8 +171,7 @@
     initializeWheel();
     initializePlayers();
 
-    let playerIndex = playerChanger.next().value;
-    currentPlayer = players[playerIndex];
+    currentRound = 1;
 
     hide(guessForm);
     show(spinForm);
@@ -214,6 +214,28 @@
 
     // Display puzzle category.
     puzzleCategory.innerText = puzzle.category.toUpperCase();
+
+    // Reset player scores for this round to zero.
+    players.forEach((player) => {
+      player.roundScore = 0;
+      player.scoreDisplay.innerText = "$" + player.roundScore;
+    });
+
+    // Set player to start round.
+    let playerIndex;
+
+    if (currentRound === 1) {
+      // For the first round, randomly cycle player index to choose player to
+      // start the round.
+      for (let i = 0; i < Math.random() * 10; i++) {
+        playerIndex = playerChanger.next().value;
+      }
+    } else {
+      // For all rounds after the first, just move to the next player.
+      playerIndex = playerChanger.next().value;
+    }
+
+    currentPlayer = players[playerIndex];
   }
 
   // Start of game
