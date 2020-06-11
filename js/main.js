@@ -160,9 +160,31 @@
 
       if (lastWheelPosition.done) {
         clearInterval(spinInterval);
-        currentWheelValue = wheelAmounts[index].value;
-        hideMainOptions();
-        showGuessForm();
+
+        let wheelValue = wheelAmounts[index].value;
+
+        switch (wheelValue) {
+          case SPECIAL_WHEEL_VALUES.BANKRUPT:
+            currentWheelValue = 0;
+            currentPlayer.roundScore = 0;
+            currentPlayer.scoreDisplay.innerText =
+              "$" + currentPlayer.roundScore;
+            switchPlayer();
+            enableMainOptions();
+            break;
+
+          case SPECIAL_WHEEL_VALUES.LOSE_A_TURN:
+            currentWheelValue = 0;
+            switchPlayer();
+            enableMainOptions();
+            break;
+
+          default:
+            currentWheelValue = wheelAmounts[index].value;
+            hideMainOptions();
+            showGuessForm();
+            break;
+        }
       }
     }, 100);
   }
