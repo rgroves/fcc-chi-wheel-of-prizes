@@ -55,10 +55,12 @@
 
   let spinForm,
     guessForm,
+    feedback,
     scoreboard,
     currentPlayer,
     puzzleCategory,
     puzzleText,
+    chosenPuzzle,
     currentRound;
 
   let playerChanger = changePlayer();
@@ -140,7 +142,6 @@
     const spinner = wheelSpinner(lastWheelPosition.value + 1, tics);
 
     const spinInterval = setInterval(() => {
-      const feedback = document.getElementById("feedback");
       lastWheelPosition = spinner.next();
       const index = lastWheelPosition.value;
       const indexBefore =
@@ -161,8 +162,101 @@
         hide(event.target);
         button.disabled = false;
         show(guessForm);
+        guessForm.elements.guess.focus();
       }
     }, 100);
+  }
+
+  function handleGuess(event) {
+    // Prevent the default form submit behavior.
+    event.preventDefault();
+
+    // Get a reference to the guess form and hide it.
+    const guessForm = event.target;
+    hide(guessForm);
+
+    let guessedLetter = guessForm.elements.guess.value.toUpperCase();
+
+    new Promise((resolve) => {
+      // Determine how many times the letter occurred in the puzzle.
+      const puzzleKey = chosenPuzzle.text.toUpperCase();
+      const searchPattern = new RegExp(guessedLetter, "g");
+      const matches = puzzleKey.match(searchPattern);
+      let letterOccurrences = 0;
+
+      if (matches != null) {
+        letterOccurrences = matches.length;
+      }
+
+      if (letterOccurrences > 0) {
+        // There were 1 or more occurrences of the letter in the puzzle.
+        let timeout = 250;
+        let reveals = [];
+
+        // Find first occurrence of the letter in the puzzle.
+        let letterIndex = puzzleKey.indexOf(guessedLetter, 0);
+
+        // Keep processing all occurrences of the letter.
+        while (letterIndex != -1) {
+          // Increase timeout value to stagger the reveals.
+          timeout += 750;
+
+          // Call asyncLetterReveal to reveal this letter and save the promise
+          // so we can finish up when all reveals have completed.
+          reveals.push(asyncLetterReveal(guessedLetter, letterIndex, timeout));
+
+          // Find next occurrence of the letter.
+          letterIndex = puzzleKey.indexOf(guessedLetter, letterIndex + 1);
+        }
+
+        // Wait for all letter occurrences to indicate they have completed.
+        Promise.all(reveals).then(() => {
+          // Update players score
+          currentPlayer.roundScore += letterOccurrences * currentWheelValue;
+          currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+          // Indicate that the work for checking player's guess has completed
+          // with a successful guess.
+          resolve(true);
+        });
+      } else {
+        // Indicate that the work for checking player's guess has completed
+        // with an unsuccessful guess.
+        resolve(false);
+      }
+    }).then((successfulGuess) => {
+      // Clear previous guess.
+      guessForm.elements.guess.value = "";
+
+      if (successfulGuess) {
+        // Provide feedback that the guess was successful.
+        feedback.innerText = "Correct! Nice guess.";
+        // Show the guess form and focus it's input field.
+        show(guessForm);
+        guessForm.elements.guess.focus();
+      } else {
+        // Provide feedback that the guess was unsuccessful.
+        feedback.innerText = "Sorry, No " + guessedLetter + "'s";
+        // TODO Change player, show player options
+      }
+    });
+  }
+
+  function asyncLetterReveal(guessedLetter, letterOffset, timeout) {
+    return new Promise((resolve) => {
+      // Reveal the letter after the speicified timeout.
+      setTimeout(() => {
+        // Find the letter's square in the game's displayed puzzle text.
+        const selector = 'span[data-letteroffset="' + letterOffset + '"]';
+        const puzzleSquare = puzzleText.querySelector(selector);
+        // Populate the puzzle square with the letter.
+        puzzleSquare.innerText = guessedLetter;
+        // Add the style to reveal the letter.
+        puzzleSquare.classList.add("game-board__puzzle-letter--reveal");
+        // Resolve the promise to indicate the reveal of the guessed letter is
+        // complete.
+        resolve();
+      }, timeout);
+    });
   }
 
   function show(element) {
@@ -182,8 +276,13 @@
 
     puzzleCategory = document.getElementById("puzzle-category");
     puzzleText = document.getElementById("puzzle-text");
+
+    // Get reference to guess form and wire up guess handler.
     guessForm = document.getElementById("guess-form");
+    guessForm.addEventListener("submit", handleGuess);
+
     scoreboard = document.getElementById("scoreboard");
+    feedback = document.getElementById("feedback");
 
     initializeWheel();
     initializePlayers();
@@ -194,29 +293,49 @@
   function initializeRound() {
     // Choose a random puzzle for this round.
     const puzzleIndex = Math.floor(Math.random() * puzzles.length);
-    const puzzle = puzzles[puzzleIndex];
+    chosenPuzzle = puzzles[puzzleIndex];
 
-    const puzzleWords = puzzle.text.split(" ");
+    // This will hold the offset for each letter in the puzzle.
+    let puzzleOffset = 0;
 
+    // Split the puzzle into words.
+    const puzzleWords = chosenPuzzle.text.split(" ");
+
+    // Process every word in the puzzle so that we build the puzzle display in
+    // the DOM.
     puzzleWords.forEach((word, wordIndex) => {
+      // Create a div element with appropriate class to hold the current word.
       const wordDiv = document.createElement("div");
       wordDiv.classList.add("game-board__puzzle-word");
 
+      // Split the word into it's individual letters.
       const puzzleLetters = word.split("");
 
+      // Process every letter creating child elements that will be added to the
+      // current word's div element.
       puzzleLetters.forEach((letter) => {
+        // Create a span with appropriate class as a placeholder for the current
+        // letter.
         const letterSpan = document.createElement("span");
         letterSpan.classList.add("game-board__puzzle-letter");
 
+        // Add an attribute to save the letters offset into the puzzle text.
+        letterSpan.setAttribute("data-letterOffset", puzzleOffset + wordIndex);
+        puzzleOffset++;
+
+        // If the current character is not a letter of the alphabet, populate
+        // the span element with the character so that special characters in the
+        // puzzle are revealed from the start.
         if (!/[A-Za-z]/.test(letter)) {
           letterSpan.innerText = letter.toUpperCase();
           letterSpan.classList.add("game-board__puzzle-letter--reveal");
         }
 
+        // Add the current letter as a child of the current word.
         wordDiv.appendChild(letterSpan);
       });
 
-      // Add space to all words excluding the last word.
+      // Add a space to all words excluding the last word.
       if (wordIndex < puzzleWords.length - 1) {
         const spaceSpan = document.createElement("span");
         spaceSpan.classList.add(
@@ -226,11 +345,12 @@
         wordDiv.appendChild(spaceSpan);
       }
 
+      // Add the current word as a child of the puzzle text.
       puzzleText.appendChild(wordDiv);
     });
 
     // Display puzzle category.
-    puzzleCategory.innerText = puzzle.category.toUpperCase();
+    puzzleCategory.innerText = chosenPuzzle.category.toUpperCase();
 
     // Reset player scores for this round to zero.
     players.forEach((player) => {
@@ -261,6 +381,9 @@
       "player-card--inactive",
       "player-card--active"
     );
+
+    feedback.innerText =
+      "Round " + currentRound + ": " + currentPlayer.name + " spin the wheel.";
 
     hide(guessForm);
     show(spinForm);
