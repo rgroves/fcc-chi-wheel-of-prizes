@@ -1,4 +1,5 @@
 (function () {
+  const VOWEL_COST = 250;
   const SPECIAL_WHEEL_VALUES = {
     LOSE_A_TURN: -1,
     BANKRUPT: -2,
@@ -55,6 +56,7 @@
 
   let mainOptions,
     spinForm,
+    vowelForm,
     guessForm,
     feedback,
     scoreboard,
@@ -173,10 +175,34 @@
 
     let guessedLetter = guessForm.elements.guess.value.toUpperCase();
 
-    new Promise((resolve) => {
+    asyncCheckForLetterInPuzzle(guessedLetter).then((letterOccurrences) => {
+      // Clear previous guess.
+      guessForm.elements.guess.value = "";
+
+      if (letterOccurrences > 0) {
+        // Update player's score
+        currentPlayer.roundScore += letterOccurrences * currentWheelValue;
+        currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+        // Provide feedback that the guess was successful.
+        feedback.innerText = "Correct! Nice guess.";
+        showMainOptions();
+      } else {
+        // Provide feedback that the guess was unsuccessful.
+        feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
+        switchPlayer();
+        showMainOptions();
+      }
+    });
+  }
+
+  function asyncCheckForLetterInPuzzle(letter) {
+    letter = letter.toUpperCase();
+
+    return new Promise((resolve) => {
       // Determine how many times the letter occurred in the puzzle.
       const puzzleKey = chosenPuzzle.text.toUpperCase();
-      const searchPattern = new RegExp(guessedLetter, "g");
+      const searchPattern = new RegExp(letter, "g");
       const matches = puzzleKey.match(searchPattern);
       let letterOccurrences = 0;
 
@@ -190,7 +216,7 @@
         let reveals = [];
 
         // Find first occurrence of the letter in the puzzle.
-        let letterIndex = puzzleKey.indexOf(guessedLetter, 0);
+        let letterIndex = puzzleKey.indexOf(letter, 0);
 
         // Keep processing all occurrences of the letter.
         while (letterIndex != -1) {
@@ -199,40 +225,19 @@
 
           // Call asyncLetterReveal to reveal this letter and save the promise
           // so we can finish up when all reveals have completed.
-          reveals.push(asyncLetterReveal(guessedLetter, letterIndex, timeout));
+          reveals.push(asyncLetterReveal(letter, letterIndex, timeout));
 
           // Find next occurrence of the letter.
-          letterIndex = puzzleKey.indexOf(guessedLetter, letterIndex + 1);
+          letterIndex = puzzleKey.indexOf(letter, letterIndex + 1);
         }
 
         // Wait for all letter occurrences to indicate they have completed.
-        Promise.all(reveals).then(() => {
-          // Update players score
-          currentPlayer.roundScore += letterOccurrences * currentWheelValue;
-          currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
-          // Indicate that the work for checking player's guess has completed
-          // with a successful guess.
-          resolve(true);
-        });
-      } else {
-        // Indicate that the work for checking player's guess has completed
-        // with an unsuccessful guess.
-        resolve(false);
+        Promise.all(reveals);
       }
-    }).then((successfulGuess) => {
-      // Clear previous guess.
-      guessForm.elements.guess.value = "";
 
-      if (successfulGuess) {
-        // Provide feedback that the guess was successful.
-        feedback.innerText = "Correct! Nice guess.";
-        showMainOptions();
-      } else {
-        // Provide feedback that the guess was unsuccessful.
-        feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
-        switchPlayer();
-        showMainOptions();
-      }
+      // Indicate that the work for checking player's guess has completed
+      // and return the number of occurrences.
+      resolve(letterOccurrences);
     });
   }
 
@@ -251,6 +256,34 @@
         // complete.
         resolve();
       }, timeout);
+    });
+  }
+
+  // Buy vowel handler.
+  function handleBuyVowel(event) {
+    event.preventDefault();
+    disableMainOptions();
+
+    let guessedLetter = event.target.elements["buy-vowel"].value.toUpperCase();
+
+    asyncCheckForLetterInPuzzle(guessedLetter).then((letterOccurrences) => {
+      // Clear previous vowel guess.
+      event.target.elements["buy-vowel"].value = "";
+
+      if (letterOccurrences > 0) {
+        // Update player's score
+        currentPlayer.roundScore -= VOWEL_COST;
+        currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+        // Provide feedback that the guess was successful.
+        feedback.innerText = "Correct! Nice guess.";
+        showMainOptions();
+      } else {
+        // Provide feedback that the guess was unsuccessful.
+        feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
+        switchPlayer();
+        showMainOptions();
+      }
     });
   }
 
@@ -357,6 +390,10 @@
     // Get reference to spin form and wire up wheel spin handler.
     spinForm = document.getElementById("spin-form");
     spinForm.addEventListener("submit", handleSpin);
+
+    // Get reference to buy vowel form and wire up buy handler.
+    vowelForm = document.getElementById("vowel-form");
+    vowelForm.addEventListener("submit", handleBuyVowel);
 
     puzzleCategory = document.getElementById("puzzle-category");
     puzzleText = document.getElementById("puzzle-text");
