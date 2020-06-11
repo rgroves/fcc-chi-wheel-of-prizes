@@ -219,7 +219,10 @@
       // Add space to all words excluding the last word.
       if (wordIndex < puzzleWords.length - 1) {
         const spaceSpan = document.createElement("span");
-        spaceSpan.classList.add("game-board__puzzle-space");
+        spaceSpan.classList.add(
+          "game-board__puzzle-letter",
+          "game-board__puzzle-space"
+        );
         wordDiv.appendChild(spaceSpan);
       }
 
