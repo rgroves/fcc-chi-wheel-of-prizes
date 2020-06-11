@@ -37,8 +37,20 @@
   let currentWheelValue;
 
   const players = [
-    { name: "Player 1", scoreDisplay: undefined, totalScore: 0, roundScore: 0 },
-    { name: "Player 2", scoreDisplay: undefined, totalScore: 0, roundScore: 0 },
+    {
+      name: "Player 1",
+      cardDisplay: undefined,
+      scoreDisplay: undefined,
+      totalScore: 0,
+      roundScore: 0,
+    },
+    {
+      name: "Player 2",
+      cardDisplay: undefined,
+      scoreDisplay: undefined,
+      totalScore: 0,
+      roundScore: 0,
+    },
   ];
 
   let spinForm,
@@ -85,9 +97,13 @@
   }
 
   function initializePlayers() {
-    players.forEach((player) => {
+    players.forEach((player, playerIndex) => {
       const playerCard = document.createElement("div");
-      playerCard.classList.add("player-card");
+      playerCard.classList.add(
+        "player-card",
+        "player-card-p" + (playerIndex + 1),
+        "player-card--inactive"
+      );
 
       const playerName = document.createElement("p");
       playerName.classList.add("player-card__name");
@@ -100,6 +116,7 @@
       playerCard.appendChild(playerScore);
       scoreboard.appendChild(playerCard);
 
+      player.cardDisplay = playerCard;
       player.scoreDisplay = playerScore;
       player.totalScore = 0;
     });
@@ -233,9 +250,17 @@
     } else {
       // For all rounds after the first, just move to the next player.
       playerIndex = playerChanger.next().value;
+      currentPlayer.cardDisplay.classList.replace(
+        "player-card--active",
+        "player-card--inactive"
+      );
     }
 
     currentPlayer = players[playerIndex];
+    currentPlayer.cardDisplay.classList.replace(
+      "player-card--inactive",
+      "player-card--active"
+    );
   }
 
   // Start of game

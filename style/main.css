@@ -114,12 +114,31 @@ body {
   grid-area: scoreboard;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-content: center;
+  box-sizing: border-box;
 }
 
 .player-card {
   padding: 1em;
+}
+.player-card--inactive {
+  opacity: 0.6;
+  border: initial;
+  border: 3px double black;
+}
+
+.player-card--active {
+  opacity: 1;
+  border: 3px double white;
+}
+
+.player-card-p1 {
+  background-color: green;
+}
+
+.player-card-p2 {
+  background-color: blue;
 }
 
 .hide {
