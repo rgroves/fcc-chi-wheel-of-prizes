@@ -34,6 +34,7 @@
     { label: "$550", value: 550 },
   ];
 
+  let guessedLettersMap = {};
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
 
@@ -196,6 +197,22 @@
     hideGuessForm();
 
     let guessedLetter = guessForm.elements.guess.value.toUpperCase();
+
+    if (guessedLettersMap[guessedLetter] === guessedLetter) {
+      // Clear previous guess.
+      guessForm.elements.guess.value = "";
+      switchPlayer();
+
+      // Provide feedback that the guess was unsuccessful.
+      feedback.innerText =
+        "Sorry, " + guessedLetter + " has already been guessed.";
+
+      showMainOptions();
+      return;
+    }
+
+    // Add this letter to the guessed letters map.
+    guessedLettersMap[guessedLetter] = guessedLetter;
 
     asyncCheckForLetterInPuzzle(guessedLetter).then((letterOccurrences) => {
       // Clear previous guess.
@@ -490,6 +507,9 @@
 
       // Add the current word as a child of the puzzle text.
       puzzleText.appendChild(wordDiv);
+
+      // Reset the guessed letters map.
+      guessedLettersMap = {};
     });
 
     // Display puzzle category.
