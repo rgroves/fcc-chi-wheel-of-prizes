@@ -53,7 +53,8 @@
     },
   ];
 
-  let spinForm,
+  let mainOptions,
+    spinForm,
     guessForm,
     feedback,
     scoreboard,
@@ -134,8 +135,7 @@
 
   function handleSpin(event) {
     event.preventDefault();
-    const button = event.target.querySelector("button");
-    button.disabled = true;
+    disableMainOptions();
 
     const tics =
       Math.floor(Math.random() * wheelAmounts.length) + wheelAmounts.length;
@@ -159,10 +159,8 @@
       if (lastWheelPosition.done) {
         clearInterval(spinInterval);
         currentWheelValue = wheelAmounts[index].value;
-        hide(event.target);
-        button.disabled = false;
-        show(guessForm);
-        guessForm.elements.guess.focus();
+        hideMainOptions();
+        showGuessForm();
       }
     }, 100);
   }
@@ -171,9 +169,7 @@
     // Prevent the default form submit behavior.
     event.preventDefault();
 
-    // Get a reference to the guess form and hide it.
-    const guessForm = event.target;
-    hide(guessForm);
+    hideGuessForm();
 
     let guessedLetter = guessForm.elements.guess.value.toUpperCase();
 
@@ -230,14 +226,12 @@
       if (successfulGuess) {
         // Provide feedback that the guess was successful.
         feedback.innerText = "Correct! Nice guess.";
-        // Show the guess form and focus it's input field.
-        show(guessForm);
-        guessForm.elements.guess.focus();
+        showMainOptions();
       } else {
         // Provide feedback that the guess was unsuccessful.
         feedback.innerText = "Sorry, there is no " + guessedLetter + ".";
         switchPlayer();
-        // TODO show player options
+        showMainOptions();
       }
     });
   }
@@ -258,6 +252,53 @@
         resolve();
       }, timeout);
     });
+  }
+
+  // Disable the controls within the main options.
+  function disableMainOptions() {
+    mainOptions
+      .querySelectorAll("form button, form input")
+      .forEach((control) => (control.disabled = true));
+  }
+
+  // Enable the controls within the main options.
+  function enableMainOptions() {
+    mainOptions
+      .querySelectorAll("form button, form input")
+      .forEach((control) => {
+        if (
+          control.getAttribute("name").startsWith("buy") &&
+          currentPlayer.roundScore < 250
+        ) {
+          // Only enable "Buy Vowel" if current player has enough money.
+          control.disabled = true;
+        } else {
+          // Enable all other controls unconditionally.
+          control.disabled = false;
+        }
+      });
+  }
+
+  // Hide the main options.
+  function hideMainOptions() {
+    hide(mainOptions);
+  }
+
+  // Show the main options.
+  function showMainOptions() {
+    enableMainOptions();
+    show(mainOptions);
+  }
+
+  // Hide the guess form.
+  function hideGuessForm() {
+    hide(guessForm);
+  }
+
+  // Show the guess form.
+  function showGuessForm() {
+    show(guessForm);
+    guessForm.elements.guess.focus();
   }
 
   function show(element) {
@@ -310,6 +351,9 @@
   // The initializeGame function performs all of the initializations that should
   // happen before the start of a new game.
   function initializeGame() {
+    // Get reference to main options panel.
+    mainOptions = document.getElementById("main-options");
+
     // Get reference to spin form and wire up wheel spin handler.
     spinForm = document.getElementById("spin-form");
     spinForm.addEventListener("submit", handleSpin);
@@ -412,9 +456,8 @@
     feedback.innerText =
       "Round " + currentRound + ": " + currentPlayer.name + " spin the wheel.";
 
-    hide(guessForm);
-    show(spinForm);
-    spinForm.elements.spinBtn.focus();
+    hideGuessForm();
+    showMainOptions();
   }
 
   // Start of game
