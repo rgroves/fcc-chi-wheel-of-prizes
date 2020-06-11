@@ -387,6 +387,7 @@
 
     hide(guessForm);
     show(spinForm);
+    spinForm.elements.spinBtn.focus();
   }
 
   // Start of game
