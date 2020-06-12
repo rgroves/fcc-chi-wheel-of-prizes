@@ -392,6 +392,7 @@
 
         // Award player the solve bonus and update the score display.
         currentPlayer.roundScore += 1000;
+        currentPlayer.totalScore += currentPlayer.roundScore;
         currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
 
         // New Round
@@ -709,20 +710,17 @@
     // Display puzzle category.
     puzzleCategory.innerText = chosenPuzzle.category.toUpperCase();
 
-    // Update scores and set player to start round.
-    if (currentRound === 1) {
-      // Set player scores for this round to zero.
-      players.forEach((player) => {
-        player.roundScore = 0;
-        player.scoreDisplay.innerText = "$" + player.roundScore;
-      });
+    // Reset player scores for this round to zero.
+    players.forEach((player) => {
+      player.roundScore = 0;
+      player.scoreDisplay.innerText = "$" + player.roundScore;
+    });
 
+    // Set player to start round.
+    if (currentRound === 1) {
       // For the first round, randomly choose a player to start the round.
       randomizeCurrentPlayer();
     } else {
-      // Tally total scores.
-      tallyScores();
-
       // For all rounds after the first, just move to the next player.
       switchPlayer();
     }
@@ -734,30 +732,20 @@
     showMainOptions();
   }
 
-  function tallyScores() {
-    // Accumulate player scores from previous round and set current round score
-    // to zero.
-    players.forEach((player) => {
-      player.totalScore += player.roundScore;
-      player.roundScore = 0;
-      player.scoreDisplay.innerText = "$" + player.roundScore;
-    });
-  }
-
   function newRound() {
     if (currentRound < 3) {
       initializeRound();
     } else {
-      tallyScores();
       let highScore = 0;
       let winner;
 
       // Display total game scores for each player.
       players.forEach((player) => {
         player.scoreDisplay.innerText = "$" + player.totalScore;
+
         if (player.totalScore > highScore) {
           highScore = player.totalScore;
-          winner = player.name;
+          winner = player;
         }
       });
 
@@ -766,7 +754,7 @@
       }
 
       feedback.innerHTML =
-        "<p>Congratulations, " + winner + ", you win!</p><p>Game Over</p>";
+        "<p>Congratulations, " + winner.name + ", you win!</p><p>Game Over</p>";
       hideMainOptions();
     }
   }
