@@ -862,24 +862,30 @@
       showNextRoundConfirmation();
     } else {
       let highScore = 0;
-      let winner;
 
-      // Display total game scores for each player.
+      // Display total game scores for each player and find high score.
       players.forEach((player) => {
         player.scoreDisplay.innerText = "$" + player.totalScore;
 
         if (player.totalScore > highScore) {
           highScore = player.totalScore;
-          winner = player;
         }
       });
 
-      if (winner != currentPlayer) {
-        switchPlayer();
+      let winners = players.filter((player) => player.totalScore === highScore);
+
+      if (winners.length > 1) {
+        feedback.innerHTML = "<p>It's a draw!</p><p>Game Over</p>";
+      } else {
+        if (winners[0] != currentPlayer) {
+          switchPlayer();
+        }
+        feedback.innerHTML =
+          "<p>Congratulations, " +
+          winners[0].name +
+          ", you win!</p><p>Game Over</p>";
       }
 
-      feedback.innerHTML =
-        "<p>Congratulations, " + winner.name + ", you win!</p><p>Game Over</p>";
       hideMainOptions();
     }
   }
