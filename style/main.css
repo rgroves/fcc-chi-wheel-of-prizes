@@ -108,22 +108,26 @@ body {
   padding: 0 1em 1em;
 }
 
+.controls-form__group {
+  display: grid;
+}
+
 .controls-form button {
   min-height: 2em;
   width: 100%;
-  margin-top: 0.5em;
   font-size: larger;
 }
 
 .controls-form input {
+  justify-self: center;
+  margin-bottom: 0.5em;
   min-height: 2em;
   font-size: larger;
+  text-align: center;
 }
 
 .play-options {
   display: grid;
-  justify-content: space-evenly;
-  align-items: flex-end;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -133,6 +137,7 @@ body {
 }
 
 .controls-form {
+  display: grid;
   margin: 0 0.5em;
 }
 
