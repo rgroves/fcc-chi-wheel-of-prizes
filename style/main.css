@@ -22,8 +22,9 @@ body {
 .game-board__title {
   grid-area: title;
   font-family: "Slackey", cursive;
+  font-size: 2em;
   text-align: center;
-  padding: 1em;
+  padding: 0.5em;
 }
 .game-board__category {
   grid-area: category;
