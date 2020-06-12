@@ -38,6 +38,7 @@
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
   let guessPeriodTimeout;
+  let solvePeriodTimeout;
 
   const players = [
     {
@@ -349,8 +350,27 @@
     event.preventDefault();
     disableMainOptions();
 
+    // This resets the puzzles state after a bad sovle attempt or time expired.
+    function resetSolve() {
+      // The player's solve attempet was incorrect.
+      // Reset the puzzle to it's initial state.
+      solvableLetters.forEach((letter) => {
+        // Remove solve classes.
+        letter.classList.remove(
+          "game-board__puzzle-letter--solveable",
+          "game-board__puzzle-letter--solving"
+        );
+
+        // Remove guessed letters.
+        letter.innerText = "";
+      });
+    }
+
     // This function checks if the player's solve attempt is correct or not.
     function checkSolve() {
+      // Clear the solve period timeout.
+      clearTimeout(solvePeriodTimeout);
+
       // Remove the solving keystroke listener.
       window.removeEventListener("keyup", solvingKeystrokeHandler);
 
@@ -372,18 +392,7 @@
 
         // TODO: NEW ROUND
       } else {
-        // The player's solve attempet was incorrect.
-        // Reset the puzzle to it's initial state.
-        solvableLetters.forEach((letter) => {
-          // Remove solve classes.
-          letter.classList.remove(
-            "game-board__puzzle-letter--solveable",
-            "game-board__puzzle-letter--solving"
-          );
-
-          // Remove guessed letters.
-          letter.innerText = "";
-        });
+        resetSolve();
 
         // Provide feedback that the solve is incorrect.
         feedback.innerText =
@@ -479,6 +488,21 @@
 
     // Add the keystroke listener.
     window.addEventListener("keyup", solvingKeystrokeHandler);
+    solvePeriodTimeout = setTimeout(solveTimeExpiredHandler, 15000);
+
+    function solveTimeExpiredHandler() {
+      resetSolve();
+
+      // Provide feedback that the guess was unsuccessful.
+      feedback.innerText =
+        "Sorry, " +
+        currentPlayer.name +
+        " time's up! You'll have to solve faster next time.";
+
+      // Switch player and show main options.
+      switchPlayer();
+      showMainOptions();
+    }
   }
 
   // Disable the controls within the main options.
