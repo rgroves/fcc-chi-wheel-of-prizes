@@ -390,7 +390,12 @@
         // Provide feedback that the player's solve attempt was correct.
         feedback.innerText = "Correct!";
 
-        // TODO: NEW ROUND
+        // Award player the solve bonus and update the score display.
+        currentPlayer.roundScore += 1000;
+        currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+        // New Round
+        newRound();
       } else {
         resetSolve();
 
@@ -630,10 +635,16 @@
     initializeWheel();
     initializePlayers();
 
-    currentRound = 1;
+    currentRound = 0;
   }
 
   function initializeRound() {
+    // Increment round number
+    currentRound++;
+
+    // Clear any puzzle text
+    Array.from(puzzleText.children).forEach((text) => text.remove());
+
     // Choose a random puzzle for this round.
     const puzzleIndex = Math.floor(Math.random() * puzzles.length);
     chosenPuzzle = puzzles[puzzleIndex];
@@ -698,19 +709,20 @@
     // Display puzzle category.
     puzzleCategory.innerText = chosenPuzzle.category.toUpperCase();
 
-    // Reset player scores for this round to zero.
-    players.forEach((player) => {
-      player.roundScore = 0;
-      player.scoreDisplay.innerText = "$" + player.roundScore;
-    });
-
-    // Set player to start round.
-    let playerIndex;
-
+    // Update scores and set player to start round.
     if (currentRound === 1) {
+      // Set player scores for this round to zero.
+      players.forEach((player) => {
+        player.roundScore = 0;
+        player.scoreDisplay.innerText = "$" + player.roundScore;
+      });
+
       // For the first round, randomly choose a player to start the round.
       randomizeCurrentPlayer();
     } else {
+      // Tally total scores.
+      tallyScores();
+
       // For all rounds after the first, just move to the next player.
       switchPlayer();
     }
@@ -720,6 +732,43 @@
 
     hideGuessForm();
     showMainOptions();
+  }
+
+  function tallyScores() {
+    // Accumulate player scores from previous round and set current round score
+    // to zero.
+    players.forEach((player) => {
+      player.totalScore += player.roundScore;
+      player.roundScore = 0;
+      player.scoreDisplay.innerText = "$" + player.roundScore;
+    });
+  }
+
+  function newRound() {
+    if (currentRound < 3) {
+      initializeRound();
+    } else {
+      tallyScores();
+      let highScore = 0;
+      let winner;
+
+      // Display total game scores for each player.
+      players.forEach((player) => {
+        player.scoreDisplay.innerText = "$" + player.totalScore;
+        if (player.totalScore > highScore) {
+          highScore = player.totalScore;
+          winner = player.name;
+        }
+      });
+
+      if (winner != currentPlayer) {
+        switchPlayer();
+      }
+
+      feedback.innerHTML =
+        "<p>Congratulations, " + winner + ", you win!</p><p>Game Over</p>";
+      hideMainOptions();
+    }
   }
 
   // Start of game
