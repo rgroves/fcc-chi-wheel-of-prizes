@@ -63,6 +63,7 @@
     vowelForm,
     solveForm,
     guessForm,
+    nextRoundForm,
     feedback,
     scoreboard,
     currentPlayer,
@@ -595,6 +596,24 @@
     guessForm.elements.guess.focus();
   }
 
+  function hideNextRoundConfirmation() {
+    hide(nextRoundForm);
+  }
+
+  function showNextRoundConfirmation() {
+    feedback.innerText = "Round Over";
+
+    let roundMessage = nextRoundForm.querySelector("#round-message");
+    roundMessage.innerHTML = "";
+    players.forEach((player) => {
+      roundMessage.innerHTML +=
+        "<p>" + player.name + " Total: " + player.totalScore + "</p>";
+    });
+
+    show(nextRoundForm);
+    nextRoundForm.elements["next-round-btn"].focus();
+  }
+
   function show(element) {
     element.classList.remove("hide");
   }
@@ -670,10 +689,21 @@
     scoreboard = document.getElementById("scoreboard");
     feedback = document.getElementById("feedback");
 
+    // Get reference to next round form and wire up button handler.
+    nextRoundForm = document.getElementById("next-round-form");
+    nextRoundForm.addEventListener("submit", handleNextRoundConfirm);
+
     initializeWheel();
     initializePlayers();
 
     currentRound = 0;
+  }
+
+  function handleNextRoundConfirm(event) {
+    event.preventDefault();
+
+    hideNextRoundConfirmation();
+    initializeRound();
   }
 
   function initializeRound() {
@@ -772,12 +802,14 @@
       "Round " + currentRound + ": " + currentPlayer.name + " spin the wheel.";
 
     hideGuessForm();
+    hideNextRoundConfirmation();
     showMainOptions();
   }
 
   function newRound() {
     if (currentRound < 3) {
-      initializeRound();
+      hideMainOptions();
+      showNextRoundConfirmation();
     } else {
       let highScore = 0;
       let winner;

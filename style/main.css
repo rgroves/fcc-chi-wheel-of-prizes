@@ -122,7 +122,8 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-#guess-form {
+#guess-form,
+#next-round-form {
   grid-column-start: 2;
 }
 
