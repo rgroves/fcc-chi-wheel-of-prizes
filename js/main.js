@@ -59,6 +59,7 @@
   let mainOptions,
     spinForm,
     vowelForm,
+    solveForm,
     guessForm,
     feedback,
     scoreboard,
@@ -344,6 +345,142 @@
     });
   }
 
+  function handleSolve(event) {
+    event.preventDefault();
+    disableMainOptions();
+
+    // This function checks if the player's solve attempt is correct or not.
+    function checkSolve() {
+      // Remove the solving keystroke listener.
+      window.removeEventListener("keyup", solvingKeystrokeHandler);
+
+      // Generate a puzzle key to tests the players solve attempt against.
+      const puzzleKey = chosenPuzzle.text.toUpperCase().replace(/ /g, "");
+
+      // Grab all of the letters from the solved puzzle that make up the solve
+      // attempt.
+      const solveAttempt = Array.from(puzzleLetters)
+        .map((letter) => letter.innerText)
+        .join("")
+        .toUpperCase();
+
+      // Check solve attempt against the puzzle key.
+      if (solveAttempt === puzzleKey) {
+        // The player's solve attempet was correct.
+        // Provide feedback that the player's solve attempt was correct.
+        feedback.innerText = "Correct!";
+
+        // TODO: NEW ROUND
+      } else {
+        // The player's solve attempet was incorrect.
+        // Reset the puzzle to it's initial state.
+        solvableLetters.forEach((letter) => {
+          // Remove solve classes.
+          letter.classList.remove(
+            "game-board__puzzle-letter--solveable",
+            "game-board__puzzle-letter--solving"
+          );
+
+          // Remove guessed letters.
+          letter.innerText = "";
+        });
+
+        // Provide feedback that the solve is incorrect.
+        feedback.innerText =
+          "Sorry, " + currentPlayer.name + ", that is not correct.";
+
+        // Switch players and enable main options
+        switchPlayer();
+        enableMainOptions();
+      }
+    }
+
+    // This is an keyup event handler for capturing the player's solve
+    // keystrokes.
+    function solvingKeystrokeHandler(event) {
+      const typedLetter = event.key.toUpperCase();
+
+      switch (typedLetter) {
+        case "ENTER":
+          // Enter was pressed, check the solve attempt for correctness.
+          checkSolve();
+          break;
+
+        case "BACKSPACE":
+        case "DELETE":
+          // Allow player to go back and make a correction in their solve
+          // attempt.
+          if (
+            currentSolveIndex != 0 &&
+            currentSolveIndex != solvableLetters.length
+          ) {
+            // Remove the current solving indicator from current
+            // letter.
+            solvableLetters[currentSolveIndex].classList.remove(
+              "game-board__puzzle-letter--solving"
+            );
+          }
+
+          if (currentSolveIndex != 0) {
+            // Back up one (unsolved) letter and add the solving indicator.
+            currentSolveIndex--;
+            solvableLetters[currentSolveIndex].innerText = "";
+            solvableLetters[currentSolveIndex].classList.add(
+              "game-board__puzzle-letter--solving"
+            );
+          }
+          break;
+
+        default:
+          // If anything other than letters were pressed, ignore it.
+          if (!typedLetter.match(/^[A-Z]$/)) {
+            return;
+          }
+
+          if (currentSolveIndex < solvableLetters.length) {
+            // Add the typed letter to the puzzle and remove the solving
+            // indicator from this letter space.
+            solvableLetters[currentSolveIndex].innerText = typedLetter;
+            solvableLetters[currentSolveIndex].classList.remove(
+              "game-board__puzzle-letter--solving"
+            );
+
+            // Move solving indicator to the next (unsolved) letter space.
+            currentSolveIndex++;
+
+            if (currentSolveIndex < solvableLetters.length) {
+              solvableLetters[currentSolveIndex].classList.add(
+                "game-board__puzzle-letter--solving"
+              );
+            }
+          }
+          break;
+      }
+    }
+
+    // Get all letters in puzzle that have not been revealed/need to be solved.
+    const puzzleLetters = puzzleText.querySelectorAll("span");
+    const solvableLetters = Array.from(puzzleLetters).filter(
+      (letter) =>
+        !letter.classList.contains("game-board__puzzle-letter--reveal") &&
+        !letter.classList.contains("game-board__puzzle-space")
+    );
+
+    // Set the index of the first letter that needs solving and add the solving indicator.
+    let currentSolveIndex = 0;
+    solvableLetters[currentSolveIndex].classList.add(
+      "game-board__puzzle-letter--solving"
+    );
+
+    // Set all of the unsolved letters to "solveable".
+    solvableLetters.forEach((letter) => {
+      letter.classList.add("game-board__puzzle-letter--solveable");
+    });
+
+    // Add the keystroke listener.
+    window.addEventListener("keyup", solvingKeystrokeHandler);
+  }
+
   // Disable the controls within the main options.
   function disableMainOptions() {
     mainOptions
@@ -451,6 +588,10 @@
     // Get reference to buy vowel form and wire up buy handler.
     vowelForm = document.getElementById("vowel-form");
     vowelForm.addEventListener("submit", handleBuyVowel);
+
+    // Get reference to buy solve form and wire up solve handler.
+    solveForm = document.getElementById("solve-form");
+    solveForm.addEventListener("submit", handleSolve);
 
     puzzleCategory = document.getElementById("puzzle-category");
     puzzleText = document.getElementById("puzzle-text");

@@ -78,6 +78,15 @@ body {
   transform: scaleX(1);
 }
 
+.game-board__puzzle-letter--solveable {
+  color: black;
+  transform: scaleX(1);
+}
+
+.game-board__puzzle-letter--solving {
+  box-shadow: inset 0px 0px 13px green;
+}
+
 .game-board__puzzle-space {
   background-color: rgba(50, 50, 50, 0.8);
 }
