@@ -55,6 +55,7 @@ This is a minimal specifications document for a Wheel of Fortune clone game. The
   - [ ] Player unsuccessfully attempts to solve the puzzle
   - [ ] Player fails to solve the puzzle within 15 seconds of choosing to solve
 - [ ] If player guesses the last letter successfully or correctly solves the puzzle, the player wins the round
+  - [ ] Award \$1,000 for a correct puzzle solve.
 
 ### End of Round
 
