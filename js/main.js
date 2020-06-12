@@ -37,6 +37,7 @@
   let guessedLettersMap = {};
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
+  let guessPeriodTimeout;
 
   const players = [
     {
@@ -184,15 +185,32 @@
             currentWheelValue = wheelAmounts[index].value;
             hideMainOptions();
             showGuessForm();
+            guessPeriodTimeout = setTimeout(timeExpiredHandler, 5000);
             break;
         }
       }
     }, 100);
   }
 
+  function timeExpiredHandler() {
+    // hide the guess form
+    hideGuessForm();
+
+    // Provide feedback that the guess was unsuccessful.
+    feedback.innerText =
+      "Sorry, " + currentPlayer.name + " you'll have to be faster next time.";
+
+    // Switch player and show main options.
+    switchPlayer();
+    showMainOptions();
+  }
+
   function handleGuess(event) {
     // Prevent the default form submit behavior.
     event.preventDefault();
+
+    // clear the guess period timeout
+    clearTimeout(guessPeriodTimeout);
 
     hideGuessForm();
 
