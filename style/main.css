@@ -45,15 +45,14 @@ body {
   display: block;
   text-align: center;
   overflow-x: auto;
+  margin: 0 1em;
 }
 
 @media (min-width: 468px) {
   .game-board__puzzle {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-areas: ". puzzle-text .";
+    display: flex;
     justify-content: center;
-    text-align: center;
+    margin: 0;
   }
 }
 
@@ -61,6 +60,13 @@ body {
   display: flex;
   flex-wrap: wrap;
   grid-area: puzzle-text;
+  justify-content: flex-start;
+}
+
+@media (min-width: 468px) {
+  .game-board__puzzle-text {
+    justify-content: center;
+  }
 }
 
 .game-board__puzzle-word {
