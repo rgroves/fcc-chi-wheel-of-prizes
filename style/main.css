@@ -161,7 +161,6 @@ body {
 }
 .player-card--inactive {
   opacity: 0.6;
-  border: initial;
   border: 3px double black;
 }
 
