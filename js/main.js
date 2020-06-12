@@ -290,13 +290,15 @@
           letterIndex = puzzleKey.indexOf(letter, letterIndex + 1);
         }
 
-        // Wait for all letter occurrences to indicate they have completed.
-        Promise.all(reveals);
+        // Wait for all letter occurrences to indicate they have completed,
+        // then indicate that the work for checking player's guess has completed
+        // and return the number of occurrences.
+        Promise.all(reveals).then(() => resolve(letterOccurrences));
+      } else {
+        // Indicate that the work for checking player's guess has completed
+        // and return the number of occurrences.
+        resolve(letterOccurrences);
       }
-
-      // Indicate that the work for checking player's guess has completed
-      // and return the number of occurrences.
-      resolve(letterOccurrences);
     });
   }
 
