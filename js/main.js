@@ -406,6 +406,9 @@
 
     // This resets the puzzles state after a bad sovle attempt or time expired.
     function resetSolve() {
+      // Remove the solving keystroke listener.
+      window.removeEventListener("keyup", solvingKeystrokeHandler);
+
       // The player's solve attempet was incorrect.
       // Reset the puzzle to it's initial state.
       solvableLetters.forEach((letter) => {
@@ -424,9 +427,6 @@
     function checkSolve() {
       // Clear the solve period timeout.
       clearTimeout(solvePeriodTimeout);
-
-      // Remove the solving keystroke listener.
-      window.removeEventListener("keyup", solvingKeystrokeHandler);
 
       // Generate a puzzle key to tests the players solve attempt against.
       const puzzleKey = chosenPuzzle.text.toUpperCase().replace(/ /g, "");
