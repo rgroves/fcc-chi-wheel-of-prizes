@@ -38,6 +38,7 @@
   let lettersRemaining;
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
+  let mainActionTimeout;
   let guessPeriodTimeout;
   let solvePeriodTimeout;
 
@@ -143,6 +144,10 @@
 
   function handleSpin(event) {
     event.preventDefault();
+
+    // Clear the main action timeout.
+    clearTimeout(mainActionTimeout);
+
     disableMainOptions();
 
     const tics =
@@ -337,6 +342,10 @@
   // Buy vowel handler.
   function handleBuyVowel(event) {
     event.preventDefault();
+
+    // Clear the main action timeout.
+    clearTimeout(mainActionTimeout);
+
     disableMainOptions();
 
     let guessedLetter = event.target.elements["buy-vowel"].value.toUpperCase();
@@ -395,6 +404,10 @@
 
   function handleSolve(event) {
     event.preventDefault();
+
+    // Clear the main action timeout.
+    clearTimeout(mainActionTimeout);
+
     disableMainOptions();
 
     // This resets the puzzles state after a bad sovle attempt or time expired.
@@ -587,6 +600,24 @@
           control.disabled = false;
         }
       });
+
+    // Start timeout for player action.
+    mainActionTimeout = setTimeout(mainActionTimeExpiredHandler, 10000);
+
+    function mainActionTimeExpiredHandler() {
+      // Hide the main options.
+      hideMainOptions();
+
+      // Provide feedback that the guess was unsuccessful.
+      feedback.innerText =
+        "Sorry, " +
+        currentPlayer.name +
+        " you'll have to act quicker next time.";
+
+      // Switch player and show main options.
+      switchPlayer();
+      showMainOptions();
+    }
   }
 
   // Hide the main options.
