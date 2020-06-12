@@ -43,12 +43,19 @@ body {
 
 .game-board__puzzle {
   grid-area: puzzle;
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-areas: ". puzzle-text .";
-  justify-content: center;
+  display: block;
   text-align: center;
-  padding-top: 1em;
+  overflow-x: auto;
+}
+
+@media (min-width: 468px) {
+  .game-board__puzzle {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas: ". puzzle-text .";
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 .game-board__puzzle-text {
