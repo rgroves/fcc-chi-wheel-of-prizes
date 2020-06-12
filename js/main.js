@@ -221,8 +221,6 @@
     let guessedLetter = guessForm.elements.guess.value.toUpperCase();
 
     if (guessedLettersMap[guessedLetter] === guessedLetter) {
-      // Clear previous guess.
-      guessForm.elements.guess.value = "";
       switchPlayer();
 
       // Provide feedback that the guess was unsuccessful.
@@ -237,9 +235,6 @@
     guessedLettersMap[guessedLetter] = guessedLetter;
 
     asyncCheckForLetterInPuzzle(guessedLetter).then((letterOccurrences) => {
-      // Clear previous guess.
-      guessForm.elements.guess.value = "";
-
       if (letterOccurrences > 0) {
         // Update player's score
         currentPlayer.roundScore += letterOccurrences * currentWheelValue;
@@ -347,8 +342,6 @@
     let guessedLetter = event.target.elements["buy-vowel"].value.toUpperCase();
 
     if (guessedLettersMap[guessedLetter] === guessedLetter) {
-      // Clear previous vowel guess.
-      event.target.elements["buy-vowel"].value = "";
       switchPlayer();
 
       // Provide feedback that the guess was unsuccessful.
@@ -574,6 +567,12 @@
 
   // Enable the controls within the main options.
   function enableMainOptions() {
+    // Clear out any previous input.
+    mainOptions
+      .querySelectorAll("input")
+      .forEach((input) => (input.value = ""));
+
+    // Enable appropriate controls.
     mainOptions
       .querySelectorAll("form button, form input")
       .forEach((control) => {
@@ -608,6 +607,9 @@
 
   // Show the guess form.
   function showGuessForm() {
+    // Clear out any previous input.
+    guessForm.elements.guess.value = "";
+
     show(guessForm);
     guessForm.elements.guess.focus();
   }
