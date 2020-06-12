@@ -346,6 +346,22 @@
 
     let guessedLetter = event.target.elements["buy-vowel"].value.toUpperCase();
 
+    if (guessedLettersMap[guessedLetter] === guessedLetter) {
+      // Clear previous vowel guess.
+      event.target.elements["buy-vowel"].value = "";
+      switchPlayer();
+
+      // Provide feedback that the guess was unsuccessful.
+      feedback.innerText =
+        "Sorry, " + guessedLetter + " has already been guessed.";
+
+      showMainOptions();
+      return;
+    }
+
+    // Add this letter to the guessed letters map.
+    guessedLettersMap[guessedLetter] = guessedLetter;
+
     asyncCheckForLetterInPuzzle(guessedLetter).then((letterOccurrences) => {
       // Clear previous vowel guess.
       event.target.elements["buy-vowel"].value = "";
