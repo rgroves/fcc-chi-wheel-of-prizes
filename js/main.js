@@ -650,10 +650,8 @@
   }
 
   function showNextRoundConfirmation() {
-    feedback.innerText = "Round Over";
-
     let roundMessage = nextRoundForm.querySelector("#round-message");
-    roundMessage.innerHTML = "";
+    roundMessage.innerHTML = "<p>Round Over</p>";
     players.forEach((player) => {
       roundMessage.innerHTML +=
         "<p>" + player.name + " Total: " + player.totalScore + "</p>";
