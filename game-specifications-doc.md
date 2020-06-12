@@ -59,7 +59,7 @@ This is a minimal specifications document for a Wheel of Fortune clone game. The
 
 ### End of Round
 
-- [ ] Player with the highest current round score adds that value to their game total score
+- [ ] Player who solved the puzzle adds their current round score to their game total score
 - [ ] Display all players total scores briefly before the next round starts
 
 ## Future Enhancements
