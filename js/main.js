@@ -35,6 +35,7 @@
   ];
 
   let guessedLettersMap = {};
+  let lettersRemaining;
   let lastWheelPosition = { value: 0 };
   let currentWheelValue;
   let guessPeriodTimeout;
@@ -243,6 +244,23 @@
         currentPlayer.roundScore += letterOccurrences * currentWheelValue;
         currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
 
+        // Update letters remaining to be solved.
+        lettersRemaining -= letterOccurrences;
+
+        if (lettersRemaining === 0) {
+          // Award player the solve bonus and update the score display.
+          currentPlayer.roundScore += 1000;
+          currentPlayer.totalScore += currentPlayer.roundScore;
+          currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+          // Provide feedback that the player's solved the puzzle.
+          feedback.innerText = "You got it!";
+
+          // New Round
+          newRound();
+          return;
+        }
+
         // Provide feedback that the guess was successful.
         feedback.innerText = "Correct! Nice guess.";
         showMainOptions();
@@ -335,6 +353,23 @@
         // Update player's score
         currentPlayer.roundScore -= VOWEL_COST;
         currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+        // Update letters remaining to be solved.
+        lettersRemaining -= letterOccurrences;
+
+        if (lettersRemaining === 0) {
+          // Award player the solve bonus and update the score display.
+          currentPlayer.roundScore += 1000;
+          currentPlayer.totalScore += currentPlayer.roundScore;
+          currentPlayer.scoreDisplay.innerText = "$" + currentPlayer.roundScore;
+
+          // Provide feedback that the player's solved the puzzle.
+          feedback.innerText = "You got it!";
+
+          // New Round
+          newRound();
+          return;
+        }
 
         // Provide feedback that the guess was successful.
         feedback.innerText = "Correct! Nice guess.";
@@ -645,6 +680,9 @@
     // Increment round number
     currentRound++;
 
+    // Reset letters remaining to be solved.
+    lettersRemaining = 0;
+
     // Clear any puzzle text
     Array.from(puzzleText.children).forEach((text) => text.remove());
 
@@ -686,6 +724,9 @@
         if (!/[A-Za-z]/.test(letter)) {
           letterSpan.innerText = letter.toUpperCase();
           letterSpan.classList.add("game-board__puzzle-letter--reveal");
+        } else {
+          // Increment letters remaining to be solved.
+          lettersRemaining++;
         }
 
         // Add the current letter as a child of the current word.
